@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Интерактивный учебный материал о пассивных компонентах волоконно-оптических линий связи.">
+  <title>Пассивные компоненты ВОЛС</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(16, 31, 51, .78);
+      --panel-solid: #102039;
+      --panel-light: #142943;
+      --text: #eef5ff;
+      --muted: #9db0c8;
+      --line: rgba(164, 190, 221, .16);
+      --cyan: #54d7e8;
+      --blue: #6d91ff;
+      --green: #71e0b0;
+      --orange: #ffbd78;
+      --radius: 22px;
+      --shadow: 0 20px 60px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 15% 0%, rgba(50, 118, 190, .22), transparent 34rem),
+        radial-gradient(ellipse at 90% 12%, rgba(38, 181, 190, .12), transparent 30rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .container { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(7, 17, 31, .78);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+    }
+    .nav {
+      min-height: 72px; display: flex; align-items: center;
+      justify-content: space-between; gap: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 750; letter-spacing: -.03em; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 12px;
+      display: grid; place-items: center; color: #06131e;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      box-shadow: 0 7px 24px rgba(84, 215, 232, .2);
+    }
+    .brand small { display: block; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .nav-links { display: flex; align-items: center; gap: 24px; color: var(--muted); font-size: 13px; font-weight: 650; }
+    .nav-links a:hover { color: var(--cyan); }
+    .menu-toggle {
+      display: none; border: 1px solid var(--line); background: var(--panel);
+      color: var(--text); width: 42px; height: 42px; border-radius: 12px; cursor: pointer;
+    }
+
+    .hero { padding: 86px 0 70px; position: relative; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 52px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px; color: var(--cyan);
+      font-size: 11px; letter-spacing: .16em; text-transform: uppercase; font-weight: 800;
+      border: 1px solid rgba(84, 215, 232, .24); border-radius: 999px;
+      padding: 8px 13px; background: rgba(84, 215, 232, .06);
+    }
+    .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+    h1 { font-size: clamp(38px, 5.4vw, 66px); line-height: 1.06; letter-spacing: -.055em; margin: 22px 0 20px; }
+    h1 span { background: linear-gradient(100deg, var(--cyan), #8ea8ff 72%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-copy { max-width: 590px; color: var(--muted); font-size: 17px; margin: 0 0 30px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      border-radius: 13px; padding: 13px 18px; font-size: 13px; font-weight: 750;
+      border: 1px solid transparent; transition: .2s ease; cursor: pointer;
+    }
+    .btn-primary { color: #06131e; background: linear-gradient(110deg, var(--cyan), #93b1ff); box-shadow: 0 10px 28px rgba(84, 215, 232, .17); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(84, 215, 232, .25); }
+    .btn-secondary { color: var(--text); background: rgba(255,255,255,.035); border-color: var(--line); }
+    .btn-secondary:hover { border-color: rgba(84, 215, 232, .5); }
+
+    .fiber-visual {
+      min-height: 390px; border: 1px solid var(--line); border-radius: 30px;
+      background: linear-gradient(145deg, rgba(22, 49, 77, .8), rgba(9, 23, 39, .72));
+      box-shadow: var(--shadow); position: relative; overflow: hidden; display: grid; place-items: center;
+    }
+    .fiber-visual::before, .fiber-visual::after {
+      content: ""; position: absolute; width: 340px; height: 340px; border-radius: 50%;
+      border: 1px solid rgba(84, 215, 232, .13);
+    }
+    .fiber-visual::after { width: 250px; height: 250px; border-color: rgba(109, 145, 255, .18); }
+    .fiber-art { width: min(100%, 470px); position: relative; z-index: 1; }
+    .visual-caption {
+      position: absolute; bottom: 22px; left: 24px; right: 24px;
+      display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px;
+      text-transform: uppercase; letter-spacing: .1em;
+    }
+    .visual-caption strong { color: var(--cyan); }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px; }
+    .stat { padding: 17px 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(15, 32, 52, .58); }
+    .stat strong { display: block; font-size: 22px; letter-spacing: -.04em; }
+    .stat span { color: var(--muted); font-size: 11px; }
+
+    section { padding: 68px 0; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+    .section-kicker { color: var(--cyan); font-size: 11px; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; }
+    h2 { font-size: clamp(27px, 3.5vw, 40px); letter-spacing: -.045em; line-height: 1.15; margin: 8px 0 0; }
+    .section-intro { color: var(--muted); max-width: 490px; margin: 0; font-size: 14px; }
+
+    .component-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .component-card {
+      min-height: 230px; padding: 23px; border: 1px solid var(--line);
+      border-radius: var(--radius); background: linear-gradient(145deg, rgba(18, 39, 63, .86), rgba(11, 26, 44, .86));
+      transition: transform .22s, border-color .22s; position: relative; overflow: hidden;
+    }
+    .component-card:hover { transform: translateY(-5px); border-color: rgba(84, 215, 232, .42); }
+    .component-card p { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+    .component-icon {
+      width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+      color: var(--cyan); background: rgba(84, 215, 232, .09); border: 1px solid rgba(84, 215, 232, .16);
+      margin-bottom: 18px;
+    }
+    .component-icon svg { width: 23px; height: 23px; }
+    .component-card h3 { font-size: 17px; margin: 0; letter-spacing: -.02em; }
+    .tag { display: inline-block; margin-top: 17px; padding: 5px 9px; border-radius: 7px; color: #a9c5ff; background: rgba(109,145,255,.1); font-size: 10px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+
+    .diagram-wrap { border: 1px solid var(--line); border-radius: 24px; padding: 26px; background: rgba(13, 29, 48, .72); box-shadow: var(--shadow); }
+    .diagram { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: center; }
+    .node {
+      min-height: 116px; border: 1px solid rgba(84, 215, 232, .2); border-radius: 15px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+      padding: 12px; background: rgba(84, 215, 232, .045); position: relative;
+    }
+    .node svg { width: 28px; height: 28px; color: var(--cyan); margin-bottom: 9px; }
+    .node strong { font-size: 12px; }
+    .node small { color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .node:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 42%; color: var(--cyan); font-size: 18px; z-index: 2; }
+    .diagram-note { color: var(--muted); font-size: 12px; text-align: center; margin: 19px 0 0; }
+
+    .split { display: grid; grid-template-columns: .9fr 1.1fr; gap: 28px; align-items: start; }
+    .info-panel { border: 1px solid var(--line); border-radius: 22px; padding: 25px; background: var(--panel); }
+    .info-panel h3 { margin: 0 0 12px; font-size: 19px; }
+    .info-panel p { color: var(--muted); font-size: 13px; margin: 0; }
+    .check-list { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 12px; }
+    .check-list li { display: flex; gap: 10px; align-items: flex-start; color: #dce8f7; font-size: 13px; }
+    .check-list li::before { content: "✓"; color: var(--green); font-weight: 900; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; }
+    table { width: 100%; border-collapse: collapse; min-width: 520px; background: rgba(15, 32, 52, .6); font-size: 12px; }
+    th, td { padding: 15px 17px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--cyan); background: rgba(84, 215, 232, .055); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+    td { color: var(--muted); }
+    td:first-child { color: var(--text); font-weight: 700; }
+    tr:last-child td { border-bottom: 0; }
+
+    .glossary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .term { border: 1px solid var(--line); border-radius: 15px; padding: 17px 18px; background: rgba(16, 31, 51, .62); }
+    .term strong { color: var(--cyan); font-size: 13px; }
+    .term p { color: var(--muted); font-size: 12px; margin: 5px 0 0; }
+
+    .quiz { display: grid; grid-template-columns: .8fr 1.2fr; gap: 28px; padding: 30px; border-radius: 25px; border: 1px solid rgba(84,215,232,.2); background: linear-gradient(130deg, rgba(21, 53, 76, .82), rgba(17, 31, 55, .9)); }
+    .quiz-copy p { color: var(--muted); font-size: 13px; }
+    .quiz-box { background: rgba(5, 16, 29, .45); border: 1px solid var(--line); border-radius: 17px; padding: 21px; }
+    .quiz-box h3 { font-size: 16px; margin: 0 0 15px; }
+    .answers { display: grid; gap: 9px; }
+    .answer {
+      width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 11px;
+      padding: 11px 13px; color: var(--text); background: rgba(255,255,255,.025); cursor: pointer; font-size: 12px;
+      transition: .18s;
+    }
+    .answer:hover { border-color: rgba(84,215,232,.55); }
+    .answer.correct { border-color: var(--green); background: rgba(113,224,176,.1); }
+    .answer.wrong { border-color: #ff8c8c; background: rgba(255,140,140,.08); }
+    .quiz-feedback { min-height: 23px; margin: 12px 0 0; color: var(--muted); font-size: 12px; }
+
+    footer { border-top: 1px solid var(--line); padding: 28px 0 38px; color: var(--muted); font-size: 11px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .back-top { color: var(--cyan); }
+
+    @media (max-width: 900px) {
+      .hero-grid, .split, .quiz { grid-template-columns: 1fr; }
+      .hero-grid { gap: 34px; }
+      .fiber-visual { min-height: 330px; }
+      .component-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 640px) {
+      .container { width: min(100% - 28px, 540px); }
+      .nav { min-height: 64px; }
+      .menu-toggle { display: grid; place-items: center; }
+      .nav-links {
+        display: none; position: absolute; top: 64px; left: 14px; right: 14px;
+        padding: 16px; border: 1px solid var(--line); border-radius: 15px;
+        background: #0d1c30; flex-direction: column; align-items: stretch; gap: 13px;
+      }
+      .nav-links.open { display: flex; }
+      .hero { padding: 57px 0 42px; }
+      .hero-copy { font-size: 15px; }
+      .fiber-visual { min-height: 270px; border-radius: 22px; }
+      .stats { gap: 8px; }
+      .stat { padding: 13px 10px; }
+      .stat strong { font-size: 18px; }
+      .stat span { font-size: 9px; }
+      section { padding: 48px 0; }
+      .component-grid, .glossary { grid-template-columns: 1fr; }
+      .component-card { min-height: 0; }
+      .diagram-wrap { padding: 17px 13px; }
+      .diagram { grid-template-columns: 1fr; gap: 9px; }
+      .node { min-height: 76px; flex-direction: row; gap: 12px; text-align: left; justify-content: flex-start; }
+      .node svg { margin: 0; flex: 0 0 auto; }
+      .node small { display: block; }
+      .node:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -20px; transform: translateX(50%); }
+      .quiz { padding: 20px; }
+      .visual-caption { font-size: 9px; bottom: 15px; left: 15px; right: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="На главную">
+        <span class="brand-mark">光</span>
+        <span>FIBER<span style="color:var(--cyan)">LINK</span><small>Основы оптической связи</small></span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню" aria-expanded="false">☰</button>
+      <nav class="nav-links" id="navLinks">
+        <a href="#components">Компоненты</a>
+        <a href="#scheme">Схема ВОЛС</a>
+        <a href="#parameters">Параметры</a>
+        <a href="#glossary">Словарь</a>
+        <a href="#quiz">Проверка знаний</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Учебный материал · Телекоммуникации</div>
+          <h1>Пассивные компоненты <span>волоконно-оптической</span> линии связи</h1>
+          <p class="hero-copy">Разберём элементы оптической инфраструктуры, которые направляют, соединяют, распределяют и защищают световой сигнал — без собственного усиления или преобразования энергии.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#components">Изучить компоненты <span>↗</span></a>
+            <a class="btn btn-secondary" href="#scheme">Посмотреть схему</a>
+          </div>
+          <div class="stats">
+            <div class="stat"><strong>01</strong><span>Передача света</span></div>
+            <div class="stat"><strong>02</strong><span>Соединение волокон</span></div>
+            <div class="stat"><strong>03</strong><span>Распределение сигнала</span></div>
+          </div>
+        </div>
+        <div class="fiber-visual" aria-label="Иллюстрация оптического волокна">
+          <svg class="fiber-art" viewBox="0 0 520 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Световой импульс проходит по оптическому волокну">
+            <defs>
+              <linearGradient id="core" x1="60" y1="180" x2="460" y2="180" gradientUnits="userSpaceOnUse"><stop stop-color="#55DCEB"/><stop offset=".5" stop-color="#9AB4FF"/><stop offset="1" stop-color="#55DCEB"/></linearGradient>
+              <linearGradient id="ray" x1="70" y1="0" x2="450" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#54D7E8" stop-opacity="0"/><stop offset=".5" stop-color="#B9F8FF"/><stop offset="1" stop-color="#54D7E8" stop-opacity="0"/></linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <path d="M50 180 C130 95 190 265 270 180 S410 95 470 180" stroke="#31577A" stroke-width="34" stroke-linecap="round" opacity=".55"/>
+            <path d="M50 180 C130 95 190 265 270 180 S410 95 470 180" stroke="url(#core)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M50 180 C130 95 190 265 270 180 S410 95 470 180" stroke="#D8FBFF" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)"/>
+            <path d="M50 180 C130 95 190 265 270 180 S410 95 470 180" stroke="url(#ray)" stroke-width="5" stroke-dasharray="17 25" stroke-linecap="round"/>
+            <circle cx="50" cy="180" r="22" fill="#143B57" stroke="#54D7E8" stroke-width="2"/>
+            <circle cx="50" cy="180" r="7" fill="#B9F8FF" filter="url(#glow)"/>
+            <circle cx="470" cy="180" r="22" fill="#143B57" stroke="#6D91FF" stroke-width="2"/>
+            <circle cx="470" cy="180" r="7" fill="#B9F8FF" filter="url(#glow)"/>
+            <g fill="#9DB0C8" font-family="sans-serif" font-size="11"><text x="25" y="225">ВХОД</text><text x="440" y="225">ВЫХОД</text></g>
+            <g stroke="#54D7E8" stroke-opacity=".4" stroke-dasharray="3 6"><path d="M90 70V115"/><path d="M260 250V295"/><path d="M420 65V110"/></g>
+            <g fill="#54D7E8"><circle cx="90" cy="70" r="3"/><circle cx="260" cy="295" r="3"/><circle cx="420" cy="65" r="3"/></g>
+          </svg>
+          <div class="visual-caption"><span>Оптическое волокно</span><strong>Свет вместо электричества</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="components">
+      <div class="container">
+        <div class="section-head">
+          <div><div class="section-kicker">01 / Основные элементы</div><h2>Из чего состоит пассивная часть ВОЛС</h2></div>
+          <p class="section-intro">Пассивные устройства не требуют электропитания для выполнения своей основной функции. Они обеспечивают физическую инфраструктуру прохождения оптического сигнала.</p>
+        </div>
+        <div class="component-grid">
+          <article class="component-card">
+            <div class="component-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/><path d="M9 5v14m6-14v14" opacity=".5"/></svg></div>
+            <h3>Оптический кабель</h3>
+            <p>Содержит одно или несколько оптических волокон, защитные покрытия и силовые элементы. Предназначен для передачи сигнала и защиты волокон от внешних воздействий.</p>
+            <span class="tag">Среда передачи</span>
+          </article>
+          <article class="component-card">
+            <div class="component-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M2 12h3m14 0h3"/></svg></div>
+            <h3>Оптические коннекторы</h3>
+            <p>Разъёмные соединители для подключения волокна к оборудованию или другому участку линии. Важны чистота торца и точность взаимного позиционирования.</p>
+            <span class="tag">Разъёмное соединение</span>
+          </article>
+          <article class="component-card">
+            <div class="component-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 12h8M8 15h5"/></svg></div>
+            <h3>Оптические розетки и адаптеры</h3>
+            <p>Розетка обеспечивает удобную точку подключения абонентского оборудования, а адаптер соединяет два коннектора и помогает точно совместить их торцы.</p>
+            <span class="tag">Точка подключения</span>
+          </article>
+          <article class="component-card">
+            <div class="component-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4v16m16-16v16M4 8h6v8H4m10-8h6m-6 8h6"/><path d="M10 12h4"/></svg></div>
+            <h3>Муфты и кроссы</h3>
+            <p>Муфты защищают места соединения волокон от влаги, пыли и механических воздействий. Оптические кроссы организуют оконцовку, коммутацию и обслуживание линий.</p>
+            <span class="tag">Защита и коммутация</span>
+          </article>
+          <article class="component-card">
+            <div class="component-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h6m6 0h6M9 12l6-7m-6 7 6 7"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="5" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg></div>
+            <h3>Оптические разветвители</h3>
+            <p>Делят мощность входного оптического сигнала между несколькими выходами или объединяют сигналы. Часто применяются в сетях PON.</p>
+            <span class="tag">Распределение сигнала</span>
+          </article>
+          <article class="component-card">
+            <div class="component-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16M7 7v10m10-10v10"/><path d="M9 12h6"/></svg></div>
+            <h3>Аттенюаторы и фильтры</h3>
+            <p>Аттенюатор вносит заданное ослабление мощности, а оптический фильтр пропускает определённые диапазоны длин волн и подавляет остальные.</p>
+            <span class="tag">Управление сигналом</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="scheme">
+      <div class="container">
+        <div class="section-head">
+          <div><div class="section-kicker">02 / Принцип работы</div><h2>Путь сигнала по линии</h2></div>
+          <p class="section-intro">Упрощённая схема показывает, как пассивные элементы объединяются в единую оптическую инфраструктуру.</p>
+        </div>
+        <div class="diagram-wrap">
+          <div class="diagram">
+            <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/></svg><div><strong>Передатчик</strong><small>Источник оптического сигнала</small></div></div>
+            <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h18M7 8l-4 4 4 4"/></svg><div><strong>Коннектор</strong><small>Разъёмное подключение</small></div></div>
+            <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12c5-8 13-8 18 0-5 8-13 8-18 0Z"/><circle cx="12" cy="12" r="3"/></svg><div><strong>Оптический кабель</strong><small>Передача по волокну</small></div></div>
+            <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h6m0 0 7-7m-7 7 7 7m0-14h5m-5 14h5"/></svg><div><strong>Разветвитель</strong><small>Распределение мощности</small></div></div>
+            <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h4"/></svg><div><strong>Приёмник</strong><small>Получение сигнала</small></div></div>
+          </div>
+          <p class="diagram-note">На практике состав и последовательность элементов зависят от архитектуры сети, типа линии и проектных требований.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="parameters">
+      <div class="container">
+        <div class="section-head">
+          <div><div class="section-kicker">03 / Характеристики</div><h2>На что обращают внимание</h2></div>
+          <p class="section-intro">Параметры компонентов влияют на суммарные потери, надёжность и качество передачи данных.</p>
+        </div>
+        <div class="split">
+          <div class="info-panel">
+            <h3>Ключевые параметры</h3>
+            <p>При выборе компонентов учитывают совместимость с типом волокна, рабочей длиной волны и условиями эксплуатации.</p>
+            <ul class="check-list">
+              <li><span><b>Вносимые потери</b> — уменьшение мощности сигнала при прохождении элемента.</span></li>
+              <li><span><b>Обратные потери</b> — характеристика отражения оптической мощности обратно к источнику.</span></li>
+              <li><span><b>Рабочая длина волны</b> — диапазон, в котором компонент соответствует заданным характеристикам.</span></li>
+              <li><span><b>Тип волокна</b> — одномодовое или многомодовое исполнение.</span></li>
+              <li><span><b>Условия среды</b> — температура, влажность, вибрация и механические нагрузки.</span></li>
+            </ul>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Компонент</th><th>Основная функция</th><th>Что проверяют</th></tr></thead>
+              <tbody>
+                <tr><td>Кабель</td><td>Передача и защита волокна</td><td>Тип волокна, затухание, конструкция</td></tr>
+                <tr><td>Коннектор</td><td>Разъёмное соединение</td><td>Тип полировки, потери, отражение</td></tr>
+                <tr><td>Муфта</td><td>Защита соединений</td><td>Герметичность, вместимость, климатическое исполнение</td></tr>
+                <tr><td>Разветвитель</td><td>Деление мощности</td><td>Коэффициент деления, потери, равномерность</td></tr>
+                <tr><td>Аттенюатор</td><td>Ослабление сигнала</td><td>Величина ослабления, точность, длина волны</td></tr>
+                <tr><td>Адаптер</td><td>Совмещение коннекторов</td><td>Тип разъёма, ресурс соединений</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="glossary">
+      <div class="container">
+        <div class="section-head">
+          <div><div class="section-kicker">04 / Термины</div><h2>Краткий словарь</h2></div>
+          <p class="section-intro">Основные понятия, которые встречаются при изучении и проектировании ВОЛС.</p>
+        </div>
+        <div class="glossary">
+          <div class="term"><strong>ВОЛС</strong><p>Волоконно-оптическая линия связи — система передачи информации по оптическим волокнам.</p></div>
+          <div class="term"><strong>Оптическое волокно</strong><p>Диэлектрический световод, передающий оптический сигнал за счёт полного внутреннего отражения.</p></div>
+          <div class="term"><strong>Затухание</strong><p>Уменьшение мощности оптического сигнала по мере распространения по линии; обычно выражается в дБ.</p></div>
+          <div class="term"><strong>Сварное соединение</strong><p>Неразъёмное соединение двух волокон, выполненное методом сварки.</p></div>
+          <div class="term"><strong>PON</strong><p>Пассивная оптическая сеть, в которой распределение сигнала выполняется пассивными оптическими разветвителями.</p></div>
+          <div class="term"><strong>Оптический бюджет</strong><p>Допустимый диапазон потерь между передатчиком и приёмником с учётом запаса на эксплуатацию.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <div class="container">
+        <div class="quiz">
+          <div class="quiz-copy">
+            <div class="section-kicker">05 / Самопроверка</div>
+            <h2>Проверь свои знания</h2>
+            <p>Выбери правильный ответ на вопрос о пассивных компонентах ВОЛС. После выбора появится пояснение.</p>
+          </div>
+          <div class="quiz-box">
+            <h3>Какую функцию выполняет оптический разветвитель?</h3>
+            <div class="answers" id="answers">
+              <button class="answer" data-correct="false">Преобразует электрический сигнал в оптический</button>
+              <button class="answer" data-correct="true">Распределяет оптическую мощность между несколькими выходами</button>
+              <button class="answer" data-correct="false">Усиливает сигнал с помощью электрического питания</button>
+            </div>
+            <p class="quiz-feedback" id="quizFeedback" aria-live="polite">Выбери один из вариантов.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© 2026 FIBERLINK · Учебный материал по основам ВОЛС</span>
+      <a class="back-top" href="#top">Вернуться наверх ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    menuToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.textContent = isOpen ? '✕' : '☰';
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.textContent = '☰';
+      });
+    });
+
+    const answers = document.querySelectorAll('.answer');
+    const feedback = document.getElementById('quizFeedback');
+
+    answers.forEach(answer => {
+      answer.addEventListener('click', () => {
+        answers.forEach(item => {
+          item.classList.remove('correct', 'wrong');
+          item.disabled = true;
+        });
+        const isCorrect = answer.dataset.correct === 'true';
+        answer.classList.add(isCorrect ? 'correct' : 'wrong');
+        if (!isCorrect) {
+          document.querySelector('.answer[data-correct="true"]').classList.add('correct');
+        }
+        feedback.textContent = isCorrect
+          ? 'Верно! Разветвитель делит входную оптическую мощность между выходными портами.'
+          : 'Не совсем. Правильный ответ выделен зелёным: разветвитель распределяет оптическую мощность.';
+        feedback.style.color = isCorrect ? 'var(--green)' : '#ffb1a8';
+      });
+    });
+  </script>
+</body>
+</html>
